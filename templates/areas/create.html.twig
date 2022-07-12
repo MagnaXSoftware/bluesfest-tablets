@@ -1,0 +1,9 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    {{ form_start(form, {'action': action, 'method': 'POST'}) }}
+    {{ form_errors(form) }}
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Create') }}</button>
+    {{ form_end(form) }}
+{% endblock content %}
