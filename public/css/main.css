@@ -7,7 +7,6 @@
   font-weight: bold;
   vertical-align: baseline;
   white-space: nowrap;
-  padding: 0.25rem auto;
 }
 
 .pill-grey {
@@ -85,6 +84,7 @@ span.space-me {
 
 #header a {
   padding: 1em;
+  white-space: nowrap;
 }
 
 #header a, #header a:visited {

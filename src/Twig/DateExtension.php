@@ -8,13 +8,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Westsworld\TimeAgo;
 
 /**
  * @author Robin van der Vleuten <robinvdvleuten@gmail.com>
  */
 class DateExtension extends AbstractExtension
 {
-    public static $units = [
+    public static array $units = [
         'y' => 'year',
         'm' => 'month',
         'd' => 'day',
@@ -24,8 +25,9 @@ class DateExtension extends AbstractExtension
     ];
 
     private ?TranslatorInterface $translator;
+    private ?TimeAgo $timeAgo;
 
-    public function __construct(TranslatorInterface $translator = null)
+    public function __construct(TranslatorInterface $translator = null, TimeAgo $timeAgo = null)
     {
         // Ignore the IdentityTranslator, otherwise the parameters won't be replaced properly
         if ($translator instanceof IdentityTranslator) {
@@ -33,6 +35,7 @@ class DateExtension extends AbstractExtension
         }
 
         $this->translator = $translator;
+        $this->timeAgo = $timeAgo;
     }
 
     public function getFilters(): array
@@ -56,6 +59,13 @@ class DateExtension extends AbstractExtension
         $date = twig_date_converter($env, $date);
         $now = twig_date_converter($env, $now);
 
+        if ($this->timeAgo) {
+            $timeAgoString = $this->timeAgo->inWords($date, $now);
+            if ($timeAgoString) {
+                return $timeAgoString;
+            }
+        }
+
         // Get the difference between the two DateTime objects.
         $diff = $date->diff($now);
 
@@ -76,7 +86,7 @@ class DateExtension extends AbstractExtension
         if ($this->translator) {
             $id = sprintf('diff.%s.%s', $invert ? 'in' : 'ago', $unit);
 
-            return $this->translator->trans($id, ['%count%' => $count], 'date');
+            return $this->translator->trans($id, ['count' => $count], 'date');
         }
 
         if (1 !== $count) {

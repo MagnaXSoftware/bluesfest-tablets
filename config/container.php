@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ValidatorBuilder;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\RuntimeLoader\FactoryRuntimeLoader;
+use Westsworld\TimeAgo;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -66,7 +67,7 @@ return [
         $twig->addExtension(new FormExtension());
         $twig->addExtension(new TranslationExtension($container->get(TranslatorInterface::class)));
         $twig->addExtension(new EnumExtension());
-        $twig->addExtension(new DateExtension());
+        $twig->addExtension(new DateExtension(null, new TimeAgo()));
 
         return $twig;
     },

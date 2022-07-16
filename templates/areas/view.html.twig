@@ -19,7 +19,7 @@
         </tr>
         {% for status in area.statuses %}
             <tr>
-                <td>{{ status.datetime|date('D, M j Y - H:i:s') }}</td>
+                <td><time datetime="{{ status.datetime|date('c') }}">{{ status.datetime|date('D, M j Y - H:i:s') }}</time></td>
                 <td>{{ macros.status(status.status) }}</td>
                 <td class="num">{{ status.deployed }}</td>
                 <td class="num">{{ status.stored }}</td>

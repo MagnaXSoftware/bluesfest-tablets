@@ -173,9 +173,7 @@ class Status
      */
     public function getDateTime(): DateTimeInterface
     {
-        $dt = new \DateTime();
-        $dt->setTimestamp($this->getTimestamp());
-        return $dt;
+        return new \DateTimeImmutable('@' . $this->getTimestamp());
     }
 
     /**
