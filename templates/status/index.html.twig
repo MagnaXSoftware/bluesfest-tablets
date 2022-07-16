@@ -11,7 +11,8 @@
             <th>Stored in Box</th>
             <th>At Trailer</th>
             <th>Total</th>
-            <th>Person</th>
+            <th>When</th>
+            <th>Name</th>
             <th>Notes</th>
         </tr>
         </thead>
@@ -24,6 +25,7 @@
                 <td class="num">{{ status.stored }}</td>
                 <td class="num">{{ status.recovered }}</td>
                 <td class="num">{{ status.deployed + status.stored + status.recovered }}</td>
+                <td><abbr title="{{ status.datetime|date('D, M j Y - H:i:s') }}">{{ status.datetime|time_diff }}</abbr></td>
                 <td>{{ status.actor }}</td>
                 <td>{{ status.notes }}</td>
             </tr>

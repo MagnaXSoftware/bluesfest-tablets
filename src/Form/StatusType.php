@@ -44,6 +44,7 @@ class StatusType extends AbstractType
                 'choice_filter' => !is_null($area_id) ? function (?Area $area) use ($area_id): bool {
                     return $area && $area->getId() == $area_id;
                 } : null,
+                'placeholder' => 'Select an Area',
             ])
             ->add('status', EnumType::class, [
                 'enum_class' => StateEnum::class,

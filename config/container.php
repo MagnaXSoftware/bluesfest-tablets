@@ -2,6 +2,7 @@
 
 use App\Form\Extension\Psr7\Psr7Extension;
 use App\Storage;
+use App\Twig\DateExtension;
 use Elao\Enum\Bridge\Twig\Extension\EnumExtension;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -63,10 +64,9 @@ return [
             },
         ]));
         $twig->addExtension(new FormExtension());
-
-        $twig->addExtension(new TranslationExtension($container->get(Translator::class)));
-
+        $twig->addExtension(new TranslationExtension($container->get(TranslatorInterface::class)));
         $twig->addExtension(new EnumExtension());
+        $twig->addExtension(new DateExtension());
 
         return $twig;
     },
