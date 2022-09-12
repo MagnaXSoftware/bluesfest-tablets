@@ -3,6 +3,10 @@
 {% block content %}
     {{ form_start(form, {'action': action, 'method': 'POST'}) }}
     {{ form_errors(form) }}
+    {{ form_row(form.area) }}
+    {% if form.tablet_updates %}
+        {{ form_row(form.tablet_updates) }}
+    {% endif %}
     {{ form_widget(form) }}
     <button class="btn">{{ button_label|default('Update') }}</button>
     {{ form_end(form) }}
@@ -10,38 +14,28 @@
 
 {% block js %}
     <script>
-        function update_expected() {
-        }
+        function update_tablets() {
+            let $area = $(this);
+            let $target = $('#update_tablet_updates');
+            $target.html('<div class="lds-ellipsis"><p style="text-align: center;">Loading</p><div></div><div></div><div></div><div></div></div>');
 
-        function update_counts() {
-            let $current = $('span#current');
-            let $inputs = $('form[name=status] input.count-current');
-            let current = 0;
-            $inputs.each(function (idx, e) {
-                current += parseInt($(e).val(), 10) || 0;
-            });
-            let $expected = $('span#expected');
-            let $selected = $($('select#status_area').get(0).selectedOptions);
-            let expected = $selected.data('expected') || 0;
+            const req = new Request(`{{ url_for('status:partial_tablets') }}?id=${$area.val()}`);
+            fetch(req).then((response) => {
+                if (!response.ok)
+                    return;
 
-            if (expected !== current) {
-                current = '<span class="red bold">' + current + "</span>";
-            } else {
-                current = '<span class="green bold">' + current + "</span>";
-            }
-            expected = '<span class="bold">' + expected + "</span>"
-
-            $expected.html("Expected tablets: " + expected);
-            $current.html("Tablets currently counted: " + current);
+                return response.text();
+            }).then((text) => {
+                let $parent = $target.parent();
+                let $replacement = $('#update_tablet_updates', $(text));
+                $target.remove();
+                $parent.append($replacement);
+            })
         }
 
         $(function () {
-            let $e = $('select#status_area');
-            $e.parent().append('<span id="expected" class="space-me"></span><span id="current" class="space-me"></span>')
-            $e.on('input', update_counts);
-            $('form[name=status] input.count-current').on('input', update_counts);
-
-            update_counts();
+            let $area = $('#update_area');
+            $area.on('change', update_tablets);
         })
     </script>
 {% endblock js %}

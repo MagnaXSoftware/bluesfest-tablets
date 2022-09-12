@@ -4,16 +4,16 @@ namespace App\Controllers;
 
 use App\Form\AreaType;
 use App\Models\Area;
-use App\Storage;
+use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class AreaController extends Controller
 {
 
-    public function index(ResponseInterface $response, Storage $db): ResponseInterface
+    public function index(ResponseInterface $response, EntityManager $em): ResponseInterface
     {
-        $areas = $db->getAreas();
+        $areas = $em->getRepository(Area::class)->findAll();
 
         return $this->twig->render($response, 'areas/index.html.twig', [
             'title' => 'Areas',
@@ -21,9 +21,9 @@ class AreaController extends Controller
         ]);
     }
 
-    public function view(ResponseInterface $response, Storage $db, $id): ResponseInterface
+    public function view(ResponseInterface $response, EntityManager $em, $id): ResponseInterface
     {
-        $area = $db->getAreaWithStatuses($id);
+        $area = $em->find(Area::class, $id);
 
         return $this->twig->render($response, 'areas/view.html.twig', [
             'title' => $area->getName(),
@@ -31,16 +31,17 @@ class AreaController extends Controller
         ]);
     }
 
-    public function create(ServerRequestInterface $request, ResponseInterface $response, Storage $db): ResponseInterface
+    public function create(ServerRequestInterface $request, ResponseInterface $response, EntityManager $em): ResponseInterface
     {
         $area = new Area();
         $form = $this->formFactory->create(AreaType::class, $area);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($db->addArea($area)) {
-                return $this->redirect($this->urlFor('area:index'));
-            }
+            $em->persist($area);
+            $em->flush();
+
+            return $this->redirect($this->urlFor('area:index'));
         }
 
         return $this->twig->render($response, 'areas/create.html.twig', [
@@ -50,16 +51,17 @@ class AreaController extends Controller
         ]);
     }
 
-    public function update(ServerRequestInterface $request, ResponseInterface $response, Storage $db, $id): ResponseInterface
+    public function update(ServerRequestInterface $request, ResponseInterface $response, EntityManager $em, $id): ResponseInterface
     {
-        $area = $db->getArea($id);
+        $area = $em->find(Area::class, $id);
         $form = $this->formFactory->create(AreaType::class, $area);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($db->updateArea($area)) {
-                return $this->redirect($this->urlFor('area:index'));
-            }
+            $em->persist($area);
+            $em->flush();
+
+            return $this->redirect($this->urlFor('area:index'));
         }
 
         return $this->twig->render($response, 'areas/update.html.twig', [

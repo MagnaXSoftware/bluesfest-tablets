@@ -1,5 +1,3 @@
-{% use "form_div_layout.html.twig" %}
-
 {%- block form_row -%}
     {%- set widget_attr = {} -%}
     {%- if help is not empty -%}
@@ -25,3 +23,55 @@
         {% if form is not rootform %}</span>{% else %}</div>{% endif %}
     {%- endif %}
 {%- endblock form_errors %}
+
+{% block tablet_update_row %}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {%- set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' row')|trim}) -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        <div class="two columns">
+            <div>
+                <label>Tablet</label>
+                <p>{{ value.tablet.code }}</p>
+            </div>
+        </div>
+        <div class="ten columns">
+            {{- form_widget(form, widget_attr) -}}
+            {{- form_help(form) -}}
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _update_tablet_updates_entry_state_row %}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {{- form_label(form) -}}
+    {{- form_widget(form, widget_attr) -}}
+    {{- form_help(form) -}}
+    {{- form_errors(form) -}}
+{% endblock %}
+
+{%- block tablet_state_widget -%}
+    {% if expanded %}
+        {{- block('tablet_state_widget_expanded') -}}
+    {% else %}
+        {{- block('choice_widget_collapsed') -}}
+    {% endif %}
+{%- endblock -%}
+
+{%- block tablet_state_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            <label for="{{ child.vars.id }}"
+                   class="{{ child.vars.required ? 'required' }} inline">
+                {{- form_widget(child) }}
+                {{ child.vars.label }}
+            </label>
+        {% endfor -%}
+    </div>
+{%- endblock -%}

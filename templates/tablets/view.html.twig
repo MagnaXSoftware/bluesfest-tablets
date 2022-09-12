@@ -1,0 +1,35 @@
+{% extends "layout.html.twig" %}
+{% import "_macros.html.twig" as macros %}
+
+{% block content %}
+    <h2>{{ tablet.code }}</h2>
+
+    <p>Assigned to <a href="{{ url_for('area:view', {'id': tablet.area.id}) }}">{{ tablet.area.name }}</a>.</p>
+
+    <table class="u-full-width">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Who</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tabletUpdate in tablet.tabletUpdates %}
+            <tr>
+                <td>
+                    <time datetime="{{ tabletUpdate.timestamp|date('c') }}">{{ tabletUpdate.timestamp|date('D, M j Y - H:i:s') }}</time>
+                </td>
+                <td>{{ macros.status(tabletUpdate.state) }}</td>
+                <td>{{ tabletUpdate.who }}</td>
+                <td>{{ tabletUpdate.notes|default('-') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4"><em>No updates for this tablet.</em></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

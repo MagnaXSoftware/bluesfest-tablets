@@ -1,7 +1,9 @@
 {% macro status(value) %}
-    {% if value.value == "na" %}
+    {% if value is null %}
+        <span class="pill pill-grey">N/A</span>
+    {% elseif value.value == "na" %}
         <span class="pill pill-grey">{{ value.readable }}</span>
-    {% elseif value.value == "stored" %}
+    {% elseif value.value == "stored" or value.value == "trailer" %}
         <span class="pill pill-blue">{{ value.readable }}</span>
     {% elseif value.value == "deployed" %}
         <span class="pill pill-green">{{ value.readable }}</span>
@@ -11,9 +13,11 @@
 {% endmacro status %}
 
 {% macro status_update(value, dest) %}
-    {% if value.value == "na" %}
+    {% if value is null %}
+        <a href="{{ dest }}" class="pill pill-grey">N/A</a>
+    {% elseif value.value == "na" %}
         <a href="{{ dest }}" class="pill pill-grey">{{ value.readable }}</a>
-    {% elseif value.value == "stored" %}
+    {% elseif value.value == "stored" or value.value == "trailer" %}
         <a href="{{ dest }}" class="pill pill-blue">{{ value.readable }}</a>
     {% elseif value.value == "deployed" %}
         <a href="{{ dest }}" class="pill pill-green">{{ value.readable }}</a>

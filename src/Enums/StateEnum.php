@@ -5,6 +5,7 @@ namespace App\Enums;
 use Elao\Enum\ReadableEnum;
 
 /**
+ * @extends ReadableEnum<string>
  * @method static StateEnum NA()
  * @method static StateEnum STORED()
  * @method static StateEnum DEPLOYED()
@@ -15,6 +16,7 @@ final class StateEnum extends ReadableEnum
     public const NA = "na";
     public const STORED = "stored";
     public const DEPLOYED = "deployed";
+    public const TRAILER = "trailer";
     public const OTHER = "other";
 
     public static function values(): array
@@ -23,6 +25,7 @@ final class StateEnum extends ReadableEnum
             self::NA,
             self::STORED,
             self::DEPLOYED,
+            self::TRAILER,
             self::OTHER,
         ];
     }
@@ -31,8 +34,9 @@ final class StateEnum extends ReadableEnum
     {
         return [
             self::NA => "N/A",
-            self::STORED => "Closed",
-            self::DEPLOYED => "Open",
+            self::STORED => "Stored in Box",
+            self::DEPLOYED => "Deployed",
+            self::TRAILER => "In IT Trailer",
             self::OTHER => "Other",
         ];
     }

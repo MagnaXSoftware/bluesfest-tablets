@@ -1,18 +1,28 @@
 <?php
 
+use App\Doctrine\DBAL\Types\StateEnumType;
+use App\Doctrine\Registry;
 use App\Form\Extension\Psr7\Psr7Extension;
-use App\Storage;
 use App\Twig\DateExtension;
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Doctrine\Persistence\ManagerRegistry;
 use Elao\Enum\Bridge\Twig\Extension\EnumExtension;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Slim\App;
 use Slim\Routing\RouteParser;
 use Slim\Views\Twig;
+use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRenderer;
@@ -24,7 +34,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\RuntimeLoader\FactoryRuntimeLoader;
 use Westsworld\TimeAgo;
 use function DI\autowire;
-use function DI\create;
 use function DI\get;
 
 return [
@@ -35,16 +44,36 @@ return [
         if (false !== $path)
             return $path;
 
-        return $container->get('root') . '/tablets.db';
+        return $container->get('root') . '/new-tablets.db';
     },
-    'db' => get(Storage::class),
-    Storage::class => autowire(),
-    PDO::class => function (ContainerInterface $container): PDO {
-        return new PDO("sqlite:{$container->get('db.path')}", '', '', [
-            PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        ]);
+    'db' => get(EntityManager::class),
+    Configuration::class => function (ContainerInterface $container): Configuration {
+        return ORMSetup::createAnnotationMetadataConfiguration(
+            [$container->get('root') . '/src/Models'],
+            true,
+            null,
+            $container->get(CacheItemPoolInterface::class)
+        );
     },
+    EntityManager::class => function (ContainerInterface $container): EntityManager {
+        return EntityManager::create(
+            $container->get(Connection::class),
+            $container->get(Configuration::class)
+        );
+    },
+    Connection::class => function (ContainerInterface $container): Connection {
+        $conn = DriverManager::getConnection(
+            ['driver' => 'pdo_sqlite', 'path' => $container->get('db.path')],
+            $container->get(Configuration::class),
+        );
+        $conn->getDatabasePlatform()->registerDoctrineTypeMapping(StateEnumType::NAME, StateEnumType::NAME);
+
+        return $conn;
+    },
+
+    CacheItemPoolInterface::class => get(ArrayCachePool::class),
+    CacheInterface::class => get(ArrayCachePool::class),
+    ArrayCachePool::class => autowire(),
 
     'template.path' => function (ContainerInterface $container): string {
         return $container->get('root') . '/templates';
@@ -58,7 +87,7 @@ return [
         $paths = [$container->get('template.path'), $vendorTwigBridgeDirectory . '/Resources/views/Form'];
         $twig = Twig::create($paths, ['debug' => true, 'auto_reload' => true]);
 
-        $formEngine = new TwigRendererEngine(['_forms.html.twig'], $twig->getEnvironment());
+        $formEngine = new TwigRendererEngine(['form_div_layout.html.twig','_forms.html.twig'], $twig->getEnvironment());
         $twig->addRuntimeLoader(new FactoryRuntimeLoader([
             FormRenderer::class => function () use ($formEngine) {
                 return new FormRenderer($formEngine);
@@ -79,13 +108,21 @@ return [
         return $container->get(App::class)->getRouteCollector()->getRouteParser();
     },
 
-    FormFactoryInterface::class => function (ValidatorInterface $validator, FormRendererInterface $formRenderer, TranslatorInterface $translator): FormFactoryInterface {
+    FormFactoryInterface::class => function (
+        ValidatorInterface    $validator,
+        FormRendererInterface $formRenderer,
+        TranslatorInterface   $translator,
+        ManagerRegistry       $registry
+    ): FormFactoryInterface {
         $formFactoryBuilder = new FormFactoryBuilder();
         $formFactoryBuilder->addExtension(new ValidatorExtension($validator, false, $formRenderer, $translator));
         $formFactoryBuilder->addExtension(new Psr7Extension());
+        $formFactoryBuilder->addExtension(new DoctrineOrmExtension($registry));
 
         return $formFactoryBuilder->getFormFactory();
     },
+    ManagerRegistry::class => get(Registry::class),
+    Registry::class => autowire(),
 
     TranslatorInterface::class => get(Translator::class),
     Translator::class => function (ContainerInterface $container): Translator {

@@ -2,15 +2,16 @@
 
 namespace App;
 
+use App\Doctrine\DBAL\Types\StateEnumType;
 use DI\Bridge\Slim\Bridge;
 use DI\Container;
 use DI\ContainerBuilder;
 use Slim\App as SlimApp;
 use Slim\Views\TwigMiddleware;
-use function DI\create;
-use function DI\get;
+use Doctrine\DBAL\Types\Type;
 
-class Boostrap
+
+class Bootstrap
 {
 
     private static ?Container $container = null;
@@ -19,6 +20,7 @@ class Boostrap
     public static function container(): Container
     {
         if (is_null(self::$container)) {
+            Type::addType(StateEnumType::NAME, StateEnumType::class);
             $containerBuilder = new ContainerBuilder();
             $containerBuilder->useAnnotations(false);
             $containerBuilder->useAutowiring(true);
@@ -35,9 +37,13 @@ class Boostrap
     {
         if (is_null(self::$app)) {
             $app = Bridge::create(self::container());
+            $app->addRoutingMiddleware();
+
             require_once __DIR__ . '/routes.php';
 
             $app->addMiddleware(TwigMiddleware::createFromContainer($app));
+
+            $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
             self::$app = $app;
         }

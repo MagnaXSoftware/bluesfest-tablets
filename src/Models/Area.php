@@ -2,29 +2,44 @@
 
 namespace App\Models;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="areas")
+ */
 class Area
 {
-    protected ?int $id = null;
-    protected string $name;
-    protected ?int $expected;
-    protected array $statuses = [];
 
     /**
-     * @return int|null
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
      */
-    public function getId(): ?int
+    protected int $id;
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected string $name;
+    /**
+     * @ORM\OneToMany(targetEntity="Tablet", mappedBy="area", fetch="LAZY")
+     * @var ArrayCollection<int, Tablet>
+     */
+    protected $tablets;
+
+    public function __construct()
     {
-        return $this->id;
+        $this->tablets = new ArrayCollection();
     }
 
     /**
-     * @param int $id
-     * @return Area
+     * @return int
      */
-    public function setId(int $id): Area
+    public function getId(): int
     {
-        $this->id = $id;
-        return $this;
+        return $this->id;
     }
 
     /**
@@ -50,35 +65,15 @@ class Area
      */
     public function getExpected(): ?int
     {
-        return $this->expected;
+        return count($this->getTablets());
     }
 
     /**
-     * @param int $expected
-     * @return Area
+     * @return ArrayCollection<int, Tablet>
      */
-    public function setExpected(int $expected): Area
+    public function getTablets()
     {
-        $this->expected = $expected;
-        return $this;
-    }
-
-    /**
-     * @return Status[]
-     */
-    public function getStatuses(): array
-    {
-        return $this->statuses;
-    }
-
-    /**
-     * @param Status[] $statuses
-     * @return Area
-     */
-    public function setStatuses(array $statuses): Area
-    {
-        $this->statuses = $statuses;
-        return $this;
+        return $this->tablets;
     }
 
 }

@@ -2,46 +2,69 @@
 
 namespace App\Controllers;
 
-use App\Form\StatusType;
+use App\Form\UpdateType;
 use App\Models\Area;
-use App\Models\Status;
-use App\Storage;
+use App\Models\Tablet;
+use App\Models\TabletUpdate;
+use App\Models\Update;
+use App\Storage\Storage;
+use Doctrine\ORM\EntityManager;
+use http\Exception\BadQueryStringException;
+use http\Exception\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class StatusController extends Controller
 {
 
-    public function index(ResponseInterface $response, Storage $db): ResponseInterface
+    public function index(ResponseInterface $response, EntityManager $em): ResponseInterface
     {
-        $statuses = $db->getLatestStatuses();
+        $areas = $em->getRepository(Area::class)->findAll();
         return $this->twig->render($response, 'status/index.html.twig', [
-            'title' => 'Tablet Status',
-            'statuses' => $statuses,
+            'title' => 'Area Status',
+            'areas' => $areas,
         ]);
     }
 
-    public function add(ServerRequestInterface $request, ResponseInterface $response, Storage $db, $id = null): ResponseInterface
+    public function add(ServerRequestInterface $request, ResponseInterface $response, EntityManager $em, $id = null): ResponseInterface
     {
-        $status = new Status();
-        if (!is_null($id)) {
-            $status->setArea($db->getArea($id));
-        }
-        $form = $this->formFactory->create(StatusType::class, $status, ['area_id' => $id]);
+        $update = new Update();
+        $update->setArea($id ? $em->find(Area::class, $id) : null);
+        $form = $this->formFactory->create(UpdateType::class, $update, ['area_id' => $id]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $status->setTimestamp(time());
-            if ($db->addStatus($status)) {
-                return $this->redirect($this->urlFor('status:index'));
-            }
+            $update->setCreatedAt(new \DateTimeImmutable());
+
+            $em->persist($update);
+            $em->flush();
+
+            return $this->redirect($this->urlFor('status:index'));
         }
 
         return $this->twig->render($response, 'status/add.html.twig', [
-            'title' => 'Add Status Update',
-            'action' => $this->urlFor('status:add', (is_null($id)) ? [] : ['id' => $id]),
+            'title' => 'Update Tablet Status',
+            'action' => $this->urlFor('status:update', (is_null($id)) ? [] : ['id' => $id]),
             'form' => $form->createView(),
         ]);
     }
+
+    public function add_partial_tablets(ServerRequestInterface $request, ResponseInterface $response, EntityManager $em): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        if (!array_key_exists('id', $params)) {
+            throw new BadQueryStringException('Query parameter "id" is required', 400);
+        }
+        $id = $params['id'];
+
+        $update = new Update();
+        $update->setArea($id ? $em->find(Area::class, $id) : null);
+        $form = $this->formFactory->create(UpdateType::class, $update, ['area_id' => $id]);
+
+        return $this->twig->render($response, 'status/add_partial_tablet.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 
 }

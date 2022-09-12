@@ -1,22 +1,27 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-<table>
-    <tr>
-        <th>Area</th>
-        <th>Expected tablets</th>
-        <th></th>
-    </tr>
-    {% for area in areas %}
-    <tr>
-        <td><a href="{{ url_for('area:view', {'id':area.id}) }}">{{ area.name }}</a></td>
-        <td class="num">{{ area.expected|default('n/a') }}</td>
-        <td><a href="{{ url_for('area:update', {'id':area.id}) }}">Update</a></td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="3"><em>No Areas Defined</em></td>
-    </tr>
-    {% endfor %}
-</table>
+    <table class="u-full-width">
+        <thead>
+        <tr>
+            <th>Area</th>
+            <th>Expected tablets</th>
+            <th colspan="2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for area in areas %}
+            <tr>
+                <td><a href="{{ url_for('area:view', {'id':area.id}) }}">{{ area.name }}</a></td>
+                <td class="num">{{ area.expected|default('n/a') }}</td>
+                <td><a href="{{ url_for('area:update', {'id':area.id}) }}">Edit</a></td>
+                <td><a href="{{ url_for('status:update', {'id':area.id}) }}">Update Status</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4"><em>No Areas Defined</em></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock content %}

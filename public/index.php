@@ -4,6 +4,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 session_start();
 
-$app = \App\Boostrap::app();
+$app = \App\Bootstrap::app();
 
 $app->run();

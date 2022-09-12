@@ -17,9 +17,6 @@ class AreaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', HiddenType::class, [
-                'required' => false,
-            ])
             ->add('name', TextType::class, [
                 'required' => true,
                 'label' => 'Area Name',
@@ -27,15 +24,6 @@ class AreaType extends AbstractType
                     new Constraints\NotBlank(),
                     new Constraints\Type('string'),
                 ],
-            ])
-            ->add('expected', IntegerType::class, [
-                'required' => true,
-                'label' => 'Number of expected tablets',
-                'constraints' => [
-                    new Constraints\NotBlank(),
-                    new Constraints\PositiveOrZero(),
-                    new Constraints\Type('integer'),
-                ]
             ]);
     }
 

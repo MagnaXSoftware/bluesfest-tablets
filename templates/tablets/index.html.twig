@@ -1,0 +1,29 @@
+{% extends "layout.html.twig" %}
+{% import "_macros.html.twig" as macros %}
+
+{% block content %}
+    <table class="u-full-width">
+        <thead>
+        <tr>
+            <th>Area</th>
+            <th>Device Code</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tablet in tablets %}
+            <tr>
+                <td class="num">{{ tablet.area.name }}</td>
+                <td><a href="{{ url_for('tablet:view', {'id':tablet.id}) }}">{{ tablet.code }}</a></td>
+                <td>{{ macros.status(tablet.lastUpdate.state) }}</td>
+                <td><a href="{{ url_for('tablet:update', {'id':tablet.id}) }}">Update</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4"><em>No Known Tablets</em></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

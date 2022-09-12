@@ -2,36 +2,39 @@
 {% import "_macros.html.twig" as macros %}
 
 {% block content %}
-    <h2>{{ area.name }}</h2>
+    <h2 class="u-pull-left">{{ area.name }}</h2>
+    <div class="u-pull-right btn-link"><a href="{{ url_for('status:update', {'id': area.id}) }}">Update Tablet
+            Status</a></div>
+    <div class="u-cf"></div>
 
-    <p>Expecting {{ area.expected|default('n/a') }} tablets.</p>
+    <p>{{ area.expected|default('n/a') }} tablets assigned.</p>
 
-    <table>
+    <table class="u-full-width">
+        <thead>
         <tr>
-            <th>Date</th>
+            <th>Tablet</th>
             <th>Status</th>
-            <th>Deployed w/ Cashiers</th>
-            <th>Stored in Box</th>
-            <th>At Trailer</th>
-            <th>Total</th>
+            <th>Date</th>
             <th>Person</th>
             <th>Notes</th>
         </tr>
-        {% for status in area.statuses %}
+        </thead>
+        <tbody>
+        {% for tablet in area.tablets %}
             <tr>
-                <td><time datetime="{{ status.datetime|date('c') }}">{{ status.datetime|date('D, M j Y - H:i:s') }}</time></td>
-                <td>{{ macros.status(status.status) }}</td>
-                <td class="num">{{ status.deployed }}</td>
-                <td class="num">{{ status.stored }}</td>
-                <td class="num">{{ status.recovered }}</td>
-                <td class="num">{{ status.deployed + status.stored + status.recovered }}</td>
-                <td>{{ status.actor }}</td>
-                <td>{{ status.notes }}</td>
+                <td><a href="{{ url_for("tablet:view", {"id": tablet.id}) }}">{{ tablet.code }}</a></td>
+                <td>{{ macros.status(tablet.lastUpdate.state) }}</td>
+                <td>
+                    <time datetime="{{ tablet.lastUpdate.timestamp|date('c') }}">{{ tablet.lastUpdate.timestamp|date('D, M j Y - H:i:s') }}</time>
+                </td>
+                <td>{{ tablet.lastUpdate.who }}</td>
+                <td>{{ tablet.lastUpdate.notes }}</td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6"><em>No Areas nor Status Updates available</em></td>
+                <td colspan="5"><em>No Tablets are assigned to this area</em></td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock content %}

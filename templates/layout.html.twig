@@ -14,9 +14,11 @@
 <div id="header">
     <div class="container">
         <a href="{{ url_for('status:index') }}">Tablet Status</a>
-        <a href="{{ url_for('status:add') }}">Update Tablet Status</a>
+        <a href="{{ url_for('status:update') }}">Update Tablet Status</a>
         <a href="{{ url_for('area:index') }}">Areas</a>
         <a href="{{ url_for('area:create') }}">Add Area</a>
+        <a href="{{ url_for('tablet:index') }}">Tablets</a>
+        <a href="{{ url_for('tablet:create') }}">Add Tablet</a>
         <a href="{{ url_for('faq') }}">FAQ</a>
     </div>
 </div>

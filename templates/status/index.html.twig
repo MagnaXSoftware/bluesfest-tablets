@@ -7,31 +7,41 @@
         <tr>
             <th>Area</th>
             <th>Status</th>
-            <th>Deployed w/ Cashiers</th>
-            <th>Stored in Box</th>
-            <th>At Trailer</th>
-            <th>Total</th>
-            <th>When</th>
+            <th colspan="2">Tablets</th>
+            <th>Date</th>
             <th>Name</th>
             <th>Notes</th>
         </tr>
         </thead>
         <tbody>
-        {% for status in statuses %}
-            <tr>
-                <td><a href="{{ url_for('area:view', { 'id': status.area.id }) }}">{{ status.area.name }}</a></td>
-                <td>{{ macros.status_update(status.status, url_for('status:add', { 'id': status.area.id })) }}</td>
-                <td class="num">{{ status.deployed }}</td>
-                <td class="num">{{ status.stored }}</td>
-                <td class="num">{{ status.recovered }}</td>
-                <td class="num">{{ status.deployed + status.stored + status.recovered }}</td>
-                <td><abbr title="{{ status.datetime|date('D, M j Y - H:i:s') }}">{{ status.datetime|time_diff }}</abbr></td>
-                <td>{{ status.actor }}</td>
-                <td>{{ status.notes }}</td>
-            </tr>
+        {% for area in areas %}
+            {% for tablet in area.tablets %}
+                <tr>
+                    {% if loop.first %}
+                        <td rowspan="{{ loop.length }}"><a
+                                    href="{{ url_for('area:view', { 'id': area.id }) }}">{{ area.name }}</a></td>
+                        <td rowspan="{{ loop.length }}">Tent STATUS TBD</td>
+                    {% endif %}
+                    <td><a href="{{ url_for('tablet:view', {'id':tablet.id}) }}">{{ tablet.code }}</a></td>
+                    <td>{{ macros.status(tablet.lastUpdate.state) }}</td>
+                    <td>
+                        <abbr title="{{ tablet.lastUpdate.timestamp|date('D, M j Y - H:i:s') }}">{{ tablet.lastUpdate.timestamp|time_diff }}</abbr>
+                    </td>
+                    {% if loop.first %}
+                        <td rowspan="{{ loop.length }}">{{ tablet.lastUpdate.who }}</td>
+                        <td rowspan="{{ loop.length }}">{{ tablet.lastUpdate.notes|default('-') }}</td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td><a href="{{ url_for('area:view', { 'id': area.id }) }}">{{ area.name }}</a></td>
+                    <td>UNKNOWN</td>
+                    <td colspan="5"><em>No tablets assigned to this area.</em></td>
+                </tr>
+            {% endfor %}
         {% else %}
             <tr>
-                <td colspan="8"><em>No Areas nor Status Updates available</em></td>
+                <td colspan="7"><em>No areas defined.</em></td>
             </tr>
         {% endfor %}
         </tbody>
