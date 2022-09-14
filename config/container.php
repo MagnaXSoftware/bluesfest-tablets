@@ -39,14 +39,21 @@ use function DI\get;
 return [
     'root' => dirname(__DIR__),
 
+    'mode' => function (): string {
+        // can't do ternary because the assignment needs to be a separate statement
+        if (false !== $mode = getenv('APP_MODE'))
+            return $mode;
+
+        return 'dev';
+    },
+
     'db.path' => function (ContainerInterface $container): string {
         $path = getenv('DB_PATH');
         if (false !== $path)
             return $path;
 
-        return $container->get('root') . '/new-tablets.db';
+        return $container->get('root') . '/tablets.db';
     },
-    'db' => get(EntityManager::class),
     Configuration::class => function (ContainerInterface $container): Configuration {
         return ORMSetup::createAnnotationMetadataConfiguration(
             [$container->get('root') . '/src/Models'],
@@ -55,11 +62,8 @@ return [
             $container->get(CacheItemPoolInterface::class)
         );
     },
-    EntityManager::class => function (ContainerInterface $container): EntityManager {
-        return EntityManager::create(
-            $container->get(Connection::class),
-            $container->get(Configuration::class)
-        );
+    EntityManager::class => function (Connection $connection, Configuration $configuration): EntityManager {
+        return EntityManager::create($connection, $configuration);
     },
     Connection::class => function (ContainerInterface $container): Connection {
         $conn = DriverManager::getConnection(
@@ -87,7 +91,7 @@ return [
         $paths = [$container->get('template.path'), $vendorTwigBridgeDirectory . '/Resources/views/Form'];
         $twig = Twig::create($paths, ['debug' => true, 'auto_reload' => true]);
 
-        $formEngine = new TwigRendererEngine(['form_div_layout.html.twig','_forms.html.twig'], $twig->getEnvironment());
+        $formEngine = new TwigRendererEngine(['form_div_layout.html.twig', '_forms.html.twig'], $twig->getEnvironment());
         $twig->addRuntimeLoader(new FactoryRuntimeLoader([
             FormRenderer::class => function () use ($formEngine) {
                 return new FormRenderer($formEngine);
@@ -104,8 +108,8 @@ return [
         return $twig->getEnvironment()->getRuntime(FormRenderer::class);
     },
 
-    RouteParser::class => function (ContainerInterface $container): RouteParser {
-        return $container->get(App::class)->getRouteCollector()->getRouteParser();
+    RouteParser::class => function (App $app): RouteParser {
+        return $app->getRouteCollector()->getRouteParser();
     },
 
     FormFactoryInterface::class => function (
@@ -125,13 +129,11 @@ return [
     Registry::class => autowire(),
 
     TranslatorInterface::class => get(Translator::class),
-    Translator::class => function (ContainerInterface $container): Translator {
-        $translator = new Translator('en');
-
-        return $translator;
+    Translator::class => function (): Translator {
+        return new Translator('en');
     },
 
-    ValidatorInterface::class => function () {
+    ValidatorInterface::class => function (): ValidatorInterface {
         $builder = new ValidatorBuilder();
 
         return $builder->getValidator();

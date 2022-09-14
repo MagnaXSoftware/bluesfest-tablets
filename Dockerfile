@@ -10,10 +10,12 @@ RUN set -eux; \
         echo "► Building php extensions"; \
 # Ensure that the php source is extracted & install the build dependencies
         docker-php-source extract; \
-        apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS; \
+        apk add --no-cache icu-libs libidn; \
+        apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS icu-dev libidn-dev; \
         \
+        docker-php-ext-install intl \
+        && docker-php-ext-enable intl; \
 # Install & Enable extensions: opcache
-        export extDir="$(php -d 'display_errors=stderr' -r 'echo ini_get("extension_dir");')"; \
         { \
             extDir="$(php -d 'display_errors=stderr' -r 'echo ini_get("extension_dir");')"; \
             \

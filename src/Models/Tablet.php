@@ -30,7 +30,6 @@ class Tablet
     private Area $area;
     /**
      * @ORM\OneToMany(targetEntity="TabletUpdate", mappedBy="tablet", cascade={"persist"}, fetch="EAGER")
-     * @ORM\OrderBy({"update.created_at" = "DESC"})
      * @var ArrayCollection<int,TabletUpdate>
      */
     private $tabletUpdates;
