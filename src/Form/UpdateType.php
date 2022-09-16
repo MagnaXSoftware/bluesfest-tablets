@@ -73,10 +73,13 @@ class UpdateType extends AbstractType
                 if ($area and $update->getTabletUpdates()->count() != $area->getExpected()) {
                     $update->getTabletUpdates()->clear();
                     foreach ($area->getTablets() as $i => $tablet) {
-                        $tabletUpdate =  new TabletUpdate();
+                        $tabletUpdate = new TabletUpdate();
                         $tabletUpdate->setTablet($tablet);
                         $tabletUpdate->setUpdate($update);
-                        $update->getTabletUpdates()->set($i,$tabletUpdate);
+                        if (null !== $tablet->getLastUpdate()) {
+                            $tabletUpdate->setState($tablet->getLastUpdate()->getState());
+                        }
+                        $update->getTabletUpdates()->set($i, $tabletUpdate);
                     }
                 }
 
