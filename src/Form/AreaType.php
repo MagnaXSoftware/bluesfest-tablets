@@ -22,6 +22,9 @@ class AreaType extends AbstractType
                     new Constraints\NotBlank(),
                     new Constraints\Type('string'),
                 ],
+                'attr' => [
+                    'autofocus' => null
+                ],
             ]);
     }
 

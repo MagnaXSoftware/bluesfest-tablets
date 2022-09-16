@@ -33,6 +33,9 @@ class TabletType extends AbstractType
                         }
                     ]),
                 ],
+                'attr' => [
+                    'autofocus' => null
+                ],
             ])
             ->add('area', EntityType::class, [
                 'required' => true,
