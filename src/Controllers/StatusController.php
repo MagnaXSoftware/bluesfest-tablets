@@ -6,6 +6,7 @@ use App\Form\UpdateType;
 use App\Models\Area;
 use App\Models\Update;
 use App\Storage\Storage;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use http\Exception\BadQueryStringException;
 use Psr\Http\Message\ResponseInterface;
@@ -31,7 +32,7 @@ class StatusController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $update->setCreatedAt(new \DateTimeImmutable());
+            $update->setCreatedAt(new DateTimeImmutable());
 
             $em->persist($update);
             $em->flush();

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 
 class Registry implements ManagerRegistryInterface
 {
@@ -84,7 +85,7 @@ class Registry implements ManagerRegistryInterface
      */
     public function getManagerForClass(string $class)
     {
-        $proxyClass = new \ReflectionClass($class);
+        $proxyClass = new ReflectionClass($class);
         if ($proxyClass->isAnonymous()) {
             return null;
         }

@@ -96,7 +96,8 @@ class Tablet
      */
     public function getLastUpdate()
     {
-        return $this->tabletUpdates->matching((new Criteria())->orderBy(['update.created_at' => 'DESC']))->first();
+        $collection = $this->getTabletUpdates();
+        return $collection->first() ? $collection->first() : null;
 
     }
 

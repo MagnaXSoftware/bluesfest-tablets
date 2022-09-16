@@ -2,8 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use App\Bootstrap;
+
 session_start();
 
-$app = \App\Bootstrap::app();
+$app = Bootstrap::app();
 
 $app->run();

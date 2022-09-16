@@ -9,6 +9,8 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\RequestHandlerInterface;
 use Symfony\Component\Form\Util\ServerParams;
+use function count;
+use function is_array;
 
 class Psr7RequestHandler implements RequestHandlerInterface
 {
@@ -77,7 +79,7 @@ class Psr7RequestHandler implements RequestHandlerInterface
                 return;
             }
 
-            if (\is_array($params) && \is_array($files)) {
+            if (is_array($params) && is_array($files)) {
                 $data = array_replace_recursive($params, $files);
             } else {
                 $data = $params ?: $files;
@@ -85,7 +87,7 @@ class Psr7RequestHandler implements RequestHandlerInterface
         }
 
         // Don't auto-submit the form unless at least one field is present.
-        if ('' === $name && \count(array_intersect_key($data, $form->all())) <= 0) {
+        if ('' === $name && count(array_intersect_key($data, $form->all())) <= 0) {
             return;
         }
 

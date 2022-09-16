@@ -53,8 +53,19 @@ class UpdateType extends AbstractType
                 'label' => 'Notes',
             ]);
 
-        $formModifier = static function (FormInterface $form, ?Area $area) {
-            $tablets = null === $area ? [] : $area->getTablets();
+        $formModifier = static function (FormInterface $form, Update $update, ?Area $area) {
+            if ($area and $update->getTabletUpdates()->count() != $area->getExpected()) {
+                $update->getTabletUpdates()->clear();
+                foreach ($area->getTablets() as $i => $tablet) {
+                    $tabletUpdate = new TabletUpdate();
+                    $tabletUpdate->setTablet($tablet);
+                    $tabletUpdate->setUpdate($update);
+                    if (null !== $tablet->getLastUpdate()) {
+                        $tabletUpdate->setState($tablet->getLastUpdate()->getState());
+                    }
+                    $update->getTabletUpdates()->set($i, $tabletUpdate);
+                }
+            }
 
             $form->add('tablet_updates', CollectionType::class, [
                 'entry_type' => TabletUpdateType::class,
@@ -66,36 +77,24 @@ class UpdateType extends AbstractType
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($formModifier) {
+                // Sets the update's TabletUpdate array, if the area was defined on form creation.
                 /** @var Update $update */
                 $update = $event->getData();
                 $area = $update->getArea();
 
-                if ($area and $update->getTabletUpdates()->count() != $area->getExpected()) {
-                    $update->getTabletUpdates()->clear();
-                    foreach ($area->getTablets() as $i => $tablet) {
-                        $tabletUpdate = new TabletUpdate();
-                        $tabletUpdate->setTablet($tablet);
-                        $tabletUpdate->setUpdate($update);
-                        if (null !== $tablet->getLastUpdate()) {
-                            $tabletUpdate->setState($tablet->getLastUpdate()->getState());
-                        }
-                        $update->getTabletUpdates()->set($i, $tabletUpdate);
-                    }
-                }
-
-                $formModifier($event->getForm(), $area);
-
+                $formModifier($event->getForm(), $update, $area);
             }
         );
         $builder->get('area')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
+                // Sets the update's TabletUpdate array, during form submission, if the area was only added after creation.
                 /** @var Update $update */
                 $update = $event->getForm()->getParent()->getData();
-
                 /** @var Area $area */
                 $area = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $area);
+
+                $formModifier($event->getForm()->getParent(), $update, $area);
             }
         );
     }
