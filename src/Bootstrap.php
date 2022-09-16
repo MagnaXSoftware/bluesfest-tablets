@@ -6,9 +6,9 @@ use App\Doctrine\DBAL\Types\StateEnumType;
 use DI\Bridge\Slim\Bridge;
 use DI\Container;
 use DI\ContainerBuilder;
+use Doctrine\DBAL\Types\Type;
 use Slim\App as SlimApp;
 use Slim\Views\TwigMiddleware;
-use Doctrine\DBAL\Types\Type;
 
 
 class Bootstrap

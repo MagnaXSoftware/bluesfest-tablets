@@ -8,7 +8,7 @@
 use App\Controllers\AreaController;
 use App\Controllers\FAQController;
 use App\Controllers\StatusController;
-use \App\Controllers\TabletController;
+use App\Controllers\TabletController;
 
 $app->get('/', [StatusController::class, 'index'])->setName('status:index');
 $app->map(['GET', 'POST'], '/update[/{id}]', [StatusController::class, 'add'])->setName('status:update');

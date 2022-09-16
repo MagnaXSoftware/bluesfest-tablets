@@ -5,17 +5,12 @@ namespace App\Controllers;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Routing\RouteParser;
 use Slim\Views\Twig;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Error\Error;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class Controller
 {

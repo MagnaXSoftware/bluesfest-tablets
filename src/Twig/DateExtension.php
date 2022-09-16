@@ -49,7 +49,7 @@ class DateExtension extends AbstractExtension
      * Filters for converting dates to a time ago string like Facebook and Twitter has.
      *
      * @param string|DateTime $date a string or DateTime object to convert
-     * @param string|DateTime $now  A string or DateTime object to compare with. If none given, the current time will be used.
+     * @param string|DateTime $now A string or DateTime object to compare with. If none given, the current time will be used.
      *
      * @return string the converted time
      */

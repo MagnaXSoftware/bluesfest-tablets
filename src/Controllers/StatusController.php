@@ -4,13 +4,10 @@ namespace App\Controllers;
 
 use App\Form\UpdateType;
 use App\Models\Area;
-use App\Models\Tablet;
-use App\Models\TabletUpdate;
 use App\Models\Update;
 use App\Storage\Storage;
 use Doctrine\ORM\EntityManager;
 use http\Exception\BadQueryStringException;
-use http\Exception\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
