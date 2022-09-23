@@ -91,7 +91,7 @@ return [
         $paths = [$container->get('template.path'), $vendorTwigBridgeDirectory . '/Resources/views/Form'];
         $twig = Twig::create($paths, ['debug' => true, 'auto_reload' => true]);
 
-        $formEngine = new TwigRendererEngine(['form_div_layout.html.twig', '_forms.html.twig'], $twig->getEnvironment());
+        $formEngine = new TwigRendererEngine(['tailwind_2_layout.html.twig', '_forms.html.twig'], $twig->getEnvironment());
         $twig->addRuntimeLoader(new FactoryRuntimeLoader([
             FormRenderer::class => function () use ($formEngine) {
                 return new FormRenderer($formEngine);

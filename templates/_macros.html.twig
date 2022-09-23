@@ -1,27 +1,27 @@
 {% macro status(value) %}
     {% if value is null %}
-        <span class="pill pill-grey">N/A</span>
+        <span class="pill pill-grey"><span>N/A</span></span>
     {% elseif value.value == "na" %}
-        <span class="pill pill-grey">{{ value.readable }}</span>
+        <span class="pill pill-grey"><span>{{ value.readable }}</span></span>
     {% elseif value.value == "stored" or value.value == "trailer" %}
-        <span class="pill pill-blue">{{ value.readable }}</span>
+        <span class="pill pill-blue"><span>{{ value.readable }}</span></span>
     {% elseif value.value == "deployed" %}
-        <span class="pill pill-green">{{ value.readable }}</span>
+        <span class="pill pill-green"><span>{{ value.readable }}</span></span>
     {% else %}
-        <span class="pill pill-dark">{{ value.readable }}</span>
+        <span class="pill pill-dark"><span>{{ value.readable }}</span></span>
     {% endif %}
 {% endmacro status %}
 
 {% macro status_update(value, dest) %}
     {% if value is null %}
-        <a href="{{ dest }}" class="pill pill-grey">N/A</a>
+        <a href="{{ dest }}" class="pill pill-grey"><span>N/A</span></a>
     {% elseif value.value == "na" %}
-        <a href="{{ dest }}" class="pill pill-grey">{{ value.readable }}</a>
+        <a href="{{ dest }}" class="pill pill-grey"><span>{{ value.readable }}</span></a>
     {% elseif value.value == "stored" or value.value == "trailer" %}
-        <a href="{{ dest }}" class="pill pill-blue">{{ value.readable }}</a>
+        <a href="{{ dest }}" class="pill pill-blue"><span>{{ value.readable }}</span></a>
     {% elseif value.value == "deployed" %}
-        <a href="{{ dest }}" class="pill pill-green">{{ value.readable }}</a>
+        <a href="{{ dest }}" class="pill pill-green"><span>{{ value.readable }}</span></a>
     {% else %}
-        <a href="{{ dest }}" class="pill pill-dark">{{ value.readable }}</a>
+        <a href="{{ dest }}" class="pill pill-dark"><span>{{ value.readable }}</span></a>
     {% endif %}
 {% endmacro status_update %}

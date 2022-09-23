@@ -2,7 +2,7 @@
 {% import "_macros.html.twig" as macros %}
 
 {% block content %}
-    <table class="u-full-width">
+    <table>
         <thead>
         <tr>
             <th>Area</th>
@@ -16,7 +16,7 @@
         <tbody>
         {% for area in areas %}
             {% for tablet in area.tablets %}
-                <tr>
+                <tr class="border-t border-slate-300">
                     {% if loop.first %}
                         <td rowspan="{{ loop.length }}"><a
                                     href="{{ url_for('area:view', { 'id': area.id }) }}">{{ area.name }}</a></td>
@@ -33,14 +33,14 @@
                     {% endif %}
                 </tr>
             {% else %}
-                <tr>
+                <tr class="border-t border-slate-300">
                     <td><a href="{{ url_for('area:view', { 'id': area.id }) }}">{{ area.name }}</a></td>
                     <td>UNKNOWN</td>
                     <td colspan="5"><em>No tablets assigned to this area.</em></td>
                 </tr>
             {% endfor %}
         {% else %}
-            <tr>
+            <tr class="border-t border-slate-300">
                 <td colspan="7"><em>No areas defined.</em></td>
             </tr>
         {% endfor %}

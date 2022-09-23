@@ -1,7 +1,7 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <table class="u-full-width">
+    <table>
         <thead>
         <tr>
             <th>Area</th>
@@ -11,14 +11,14 @@
         </thead>
         <tbody>
         {% for area in areas %}
-            <tr>
+            <tr class="border-y border-slate-300">
                 <td><a href="{{ url_for('area:view', {'id':area.id}) }}">{{ area.name }}</a></td>
                 <td class="num">{{ area.expected|default('n/a') }}</td>
                 <td><a href="{{ url_for('area:update', {'id':area.id}) }}">Edit</a></td>
                 <td><a href="{{ url_for('status:update', {'id':area.id}) }}">Update Status</a></td>
             </tr>
         {% else %}
-            <tr>
+            <tr class="border-y border-slate-300">
                 <td colspan="4"><em>No Areas Defined</em></td>
             </tr>
         {% endfor %}

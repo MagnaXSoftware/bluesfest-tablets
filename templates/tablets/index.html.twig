@@ -2,7 +2,7 @@
 {% import "_macros.html.twig" as macros %}
 
 {% block content %}
-    <table class="u-full-width">
+    <table>
         <thead>
         <tr>
             <th>Area</th>
@@ -13,14 +13,14 @@
         </thead>
         <tbody>
         {% for tablet in tablets %}
-            <tr>
+            <tr class="border-y border-slate-300">
                 <td class="num">{{ tablet.area.name }}</td>
                 <td><a href="{{ url_for('tablet:view', {'id':tablet.id}) }}">{{ tablet.code }}</a></td>
                 <td>{{ macros.status(tablet.lastUpdate.state) }}</td>
                 <td><a href="{{ url_for('tablet:update', {'id':tablet.id}) }}">Update</a></td>
             </tr>
         {% else %}
-            <tr>
+            <tr class="border-y border-slate-300">
                 <td colspan="4"><em>No Known Tablets</em></td>
             </tr>
         {% endfor %}

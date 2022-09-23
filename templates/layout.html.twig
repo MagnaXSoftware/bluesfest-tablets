@@ -5,32 +5,61 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/skeleton.css">
+    <link rel="stylesheet" href="/css/out.css">
     <link rel="stylesheet" href="/css/main.css">
     {% block head %}{% endblock head %}
 </head>
 <body>
-<div id="header">
-    <div class="container">
-        <a href="{{ url_for('status:index') }}">Tablet Status</a>
-        <a href="{{ url_for('status:update') }}">Update Tablet Status</a>
-        <a href="{{ url_for('area:index') }}">Areas</a>
-        <a href="{{ url_for('area:create') }}">Add Area</a>
-        <a href="{{ url_for('tablet:index') }}">Tablets</a>
-        <a href="{{ url_for('tablet:create') }}">Add Tablet</a>
-        <a href="{{ url_for('faq') }}">FAQ</a>
+<nav class="bg-slate-900">
+    <div class="container flex flex-wrap justify-between items-center mx-auto py-4">
+        <button id="navbar-collapse" data-collapse-toggle="navbar-default" type="button"
+                class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                aria-controls="navbar-default" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                      d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                      clip-rule="evenodd"></path>
+            </svg>
+        </button>
+        <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+            <ul class="flex flex-col p-4 mt-4 md:flex-row md:space-x-4 md:py-0 md:px-4 md:mt-0 md:text-sm md:font-medium">
+                <li><a href="{{ url_for('status:index') }}" class="nav-link">Tablet Status</a></li>
+                <li><a href="{{ url_for('status:update') }}" class="nav-link">Update Tablet Status</a></li>
+                <li><a href="{{ url_for('area:index') }}" class="nav-link">Areas</a></li>
+                <li><a href="{{ url_for('area:create') }}" class="nav-link">Add Area</a></li>
+                <li><a href="{{ url_for('tablet:index') }}" class="nav-link">Tablets</a></li>
+                <li><a href="{{ url_for('tablet:create') }}" class="nav-link">Add Tablet</a></li>
+                <li><a href="{{ url_for('faq') }}" class="nav-link">FAQ</a></li>
+            </ul>
+        </div>
     </div>
-</div>
-<div class="container">
-    <div id="content">
-        {% block content %}
-        {% endblock content %}
-    </div>
-    <div id="footer">{% block footer %}<small>&copy; 2022 MagnaX Software - Built for
-            Bluesfest</small>{% endblock footer %}</div>
-</div>
+</nav>
+<main class="container mx-auto py-4">
+    {% block content %}
+    {% endblock content %}
+</main>
+<footer class="container mx-auto text-sm text-center border-t border-slate-200 mt-6 py-3 px-2">{% block footer %}&copy;
+    2022 MagnaX Software - Built for
+    Bluesfest{% endblock footer %}</footer>
 <script src="/js/cash.min.js"></script>
+<script type="application/javascript">
+    function toggleCollapse() {
+        let $btn = $(this);
+        let targetId = $btn.data('collapse-toggle');
+        let $target = $(`#${targetId}`);
+        if ($target.hasClass('hidden')) {
+            $target.removeClass('hidden');
+        } else {
+            $target.addClass('hidden');
+        }
+    }
+
+    $(function () {
+        $('button[data-collapse-toggle]').on('click', toggleCollapse);
+    });
+</script>
 {% block js %}{% endblock js %}
 </body>
 </html>
