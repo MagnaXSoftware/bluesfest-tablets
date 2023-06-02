@@ -2,9 +2,14 @@ FROM composer:2 as composer
 
 FROM php:7.4-fpm-alpine
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+WORKDIR /srv
 
 VOLUME /data
+VOLUME /srv/public
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN set -eux; \
         echo "► Building php extensions"; \
@@ -36,10 +41,6 @@ RUN set -eux; \
         apk del --no-cache --no-network .phpize-deps; \
         docker-php-source delete
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-WORKDIR /srv
-
 COPY --chown=www-data:www-data composer.json composer.lock /srv/
 
 RUN set -eu; \
@@ -52,7 +53,5 @@ RUN set -eu; \
     chown -R www-data:www-data /srv
 
 COPY --chown=www-data:www-data . /srv/
-
-VOLUME /srv/public
 
 USER www-data:www-data
