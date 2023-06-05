@@ -29,7 +29,6 @@
     {
       "action": {
         "share": "/srv/app/public$uri",
-        "chroot": "/srv/app",
         "fallback": {
           "pass": "applications/slim/index"
         }
