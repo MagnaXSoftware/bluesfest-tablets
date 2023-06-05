@@ -10,10 +10,6 @@ use App\Controllers\FAQController;
 use App\Controllers\StatusController;
 use App\Controllers\TabletController;
 
-$app->get('/favicon.ico', function ($request) {
-    throw new \Slim\Exception\HttpNotFoundException($request, "No favicon is present");
-});
-
 $app->get('/', [StatusController::class, 'index'])->setName('status:index');
 $app->map(['GET', 'POST'], '/update[/{id}]', [StatusController::class, 'add'])->setName('status:update');
 $app->get('/api/update/partial/tablets', [StatusController::class, 'add_partial_tablets'])->setName('status:partial_tablets');
