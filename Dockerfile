@@ -122,8 +122,6 @@ COPY --chown=www-data:www-data . /srv/app
 
 STOPSIGNAL SIGTERM
 
-ENV DB_PATH "/srv/data/tablets.db"
-
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 EXPOSE 80
 CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
