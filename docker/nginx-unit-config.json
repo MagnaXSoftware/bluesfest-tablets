@@ -1,0 +1,56 @@
+{
+  "listeners": {
+    "*:80": {
+      "pass": "routes"
+    }
+  },
+
+  "routes": [
+    {
+      "match": {
+        "uri": [
+          "*.php",
+          "*.php/*"
+        ]
+      },
+
+      "action": {
+        "pass": "applications/slim/direct"
+      }
+    },
+    {
+      "action": {
+        "share": "/srv/app/public$uri",
+        "fallback": {
+          "pass": "applications/slim/index"
+        }
+      }
+    }
+  ],
+
+  "applications": {
+    "slim": {
+      "type": "php",
+      "user": "www-data",
+      "group": "www-data",
+      "options": {
+        "admin": {
+          "date.timezone": "America/Toronto"
+        },
+        "user": {
+          "display_errors": "0"
+        }
+      },
+      "targets": {
+        "direct": {
+          "root": "/srv/app/public/"
+        },
+
+        "index": {
+          "root": "/srv/app/public/",
+          "script": "index.php"
+        }
+      }
+    }
+  }
+}
