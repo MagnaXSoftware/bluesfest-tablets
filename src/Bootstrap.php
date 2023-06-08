@@ -37,13 +37,13 @@ class Bootstrap
     {
         if (is_null(self::$app)) {
             $app = Bridge::create(self::container());
-            $app->addRoutingMiddleware();
 
             require_once __DIR__ . '/routes.php';
 
-            $app->addMiddleware(TwigMiddleware::createFromContainer($app));
+            $app->addErrorMiddleware(true, true, true);
 
-            $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+            $app->addMiddleware(TwigMiddleware::createFromContainer($app));
+            $app->addRoutingMiddleware();
 
             self::$app = $app;
         }
