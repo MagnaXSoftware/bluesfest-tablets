@@ -1,6 +1,6 @@
 FROM composer:2 as composer
 
-FROM php:7.4-cli-bullseye
+FROM php:8.0-cli-bullseye
 
 WORKDIR /srv/app
 

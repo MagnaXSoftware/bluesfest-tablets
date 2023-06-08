@@ -1,6 +1,6 @@
 {
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0,<8.1",
     "ext-pdo": "*",
     "ext-pdo_sqlite": "*",
     "ext-mbstring": "*",
@@ -22,7 +22,8 @@
     "jimmiw/php-time-ago": "^3.2",
     "kdyby/parse-use-statements": "^0.2.0",
     "doctrine/orm": "^2.13.1",
-    "doctrine/annotations": "^1.13"
+    "doctrine/annotations": "^1.13",
+    "doctrine/migrations": "^3.5"
   },
   "replace": {
     "symfony/polyfill-ctype": "*",
@@ -38,7 +39,8 @@
     "symfony/polyfill-php70": "*",
     "symfony/polyfill-php71": "*",
     "symfony/polyfill-php72": "*",
-    "symfony/polyfill-php73": "*"
+    "symfony/polyfill-php73": "*",
+    "symfony/polyfill-php74": "*"
   },
   "autoload": {
     "psr-4": {
@@ -47,7 +49,7 @@
   },
   "config": {
     "platform": {
-      "php": "7.4"
+      "php": "8.0"
     }
   }
 }

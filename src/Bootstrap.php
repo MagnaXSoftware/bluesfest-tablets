@@ -22,7 +22,7 @@ class Bootstrap
         if (is_null(self::$container)) {
             Type::addType(StateEnumType::NAME, StateEnumType::class);
             $containerBuilder = new ContainerBuilder();
-            $containerBuilder->useAnnotations(false);
+            $containerBuilder->useAttributes(true);
             $containerBuilder->useAutowiring(true);
 
             $containerBuilder->addDefinitions(__DIR__ . '/../config/container.php');
