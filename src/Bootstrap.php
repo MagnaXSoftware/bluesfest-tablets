@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Auth\AuthenticationMiddleware;
 use App\Doctrine\DBAL\Types\StateEnumType;
 use DI\Bridge\Slim\Bridge;
 use DI\Container;
@@ -43,6 +44,7 @@ class Bootstrap
             require_once __DIR__ . '/routes.php';
 
             $app->addMiddleware(TwigMiddleware::createFromContainer($app));
+            $app->addMiddleware(AuthenticationMiddleware::createFromContainer($app));
             $app->addRoutingMiddleware();
 
             $app->addErrorMiddleware(true, true, true);

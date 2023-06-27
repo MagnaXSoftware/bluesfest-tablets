@@ -9,14 +9,16 @@ use App\Models\Area;
 use App\Models\Update;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
-use http\Exception\BadQueryStringException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpException;
+use App\Auth\Attributes\HasRole;
 
+#[HasRole('ROLE_UPDATE')]
 class StatusController extends Controller
 {
 
+    #[HasRole('ROLE_ANON')]
     public function index(ResponseInterface $response, EntityManager $em): ResponseInterface
     {
         $areas = $em->getRepository(Area::class)->findAll();

@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Auth\Doctrine\HashPasswordSubscriber;
+use App\Doctrine\DBAL\Platforms\SqliteWithJSONPlatform;
 use App\Doctrine\DBAL\Types\StateEnumType;
 use App\Doctrine\Registry;
 use App\Form\Extension\Psr7\Psr7Extension;
 use App\Twig\DateExtension;
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractAsset;
@@ -77,11 +80,17 @@ return [
 
         return $config;
     },
-    EntityManager::class => autowire()->constructorParameter('eventManager', null),
-    Connection::class => function (ContainerInterface $container): Connection {
+    EventManager::class => function (): EventManager {
+        $em = new EventManager();
+        $em->addEventSubscriber(new HashPasswordSubscriber());
+        return $em;
+    },
+    EntityManager::class => autowire(),
+    Connection::class => function (ContainerInterface $container, ORMConfiguration $config, EventManager $eventManager): Connection {
         $conn = DriverManager::getConnection(
-            ['driver' => 'pdo_sqlite', 'path' => $container->get('db.path')],
-            $container->get(ORMConfiguration::class),
+            ['driver' => 'pdo_sqlite', 'path' => $container->get('db.path'), 'platform' => new SqliteWithJSONPlatform()],
+            $config,
+            $eventManager,
         );
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping(StateEnumType::NAME, StateEnumType::NAME);
 

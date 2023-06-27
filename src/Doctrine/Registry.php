@@ -1,14 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Doctrine;
 
 use DI\NotFoundException;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Proxy\Proxy as ORMProxy;
 use Doctrine\Persistence\ManagerRegistry as ManagerRegistryInterface;
+use Doctrine\Persistence\Proxy;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
@@ -84,6 +83,7 @@ class Registry implements ManagerRegistryInterface
 
     /**
      * {@inheritDoc}
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public function getManagerForClass(string $class)
     {
@@ -92,7 +92,7 @@ class Registry implements ManagerRegistryInterface
             return null;
         }
 
-        if ($proxyClass->implementsInterface(Proxy::class)) {
+        if ($proxyClass->implementsInterface(ORMProxy::class) || $proxyClass->implementsInterface(Proxy::class)) {
             $parentClass = $proxyClass->getParentClass();
 
             if ($parentClass === false) {
