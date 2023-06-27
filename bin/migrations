@@ -1,1 +1,27 @@
-../vendor/bin/doctrine-migrations
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Bootstrap;
+use Doctrine\Migrations\Configuration\Configuration;
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ExistingConfiguration;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\EntityManager;
+
+$container = Bootstrap::container();
+
+// TODO load from container
+$config = $container->get(Configuration::class);
+
+// Loads the EM from the container and builds a DependencyFactory from it.
+$entityManager = $container->get(EntityManager::class);
+
+$dependencyFactory = DependencyFactory::fromEntityManager(new ExistingConfiguration($config), new ExistingEntityManager($entityManager));
+
+/** @noinspection PhpInternalEntityUsedInspection */
+ConsoleRunner::run([], $dependencyFactory);

@@ -6,50 +6,32 @@ use App\Enums\StateEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="tablet_updates")
- */
+
+#[ORM\Entity]
+#[ORM\Table(name: "tablet_updates")]
 class TabletUpdate
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
     private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Tablet", inversedBy="tabletUpdates", cascade={"persist"}, fetch="LAZY")
-     */
+    #[ORM\ManyToOne(targetEntity: Tablet::class, cascade: ["persist"], fetch: "LAZY", inversedBy: "tabletUpdates")]
     private Tablet $tablet;
 
-    /**
-     * @Orm\ManyToOne(targetEntity="Update", inversedBy="tabletUpdates", cascade={"persist"}, fetch="EAGER")
-     */
+    #[ORM\ManyToOne(targetEntity: Update::class, cascade: ["persist"], fetch: "EAGER", inversedBy: "tabletUpdates")]
     private Update $update;
 
-    /**
-     * @ORM\Column(type="StateEnum")
-     */
+    #[ORM\Column(type: "StateEnum")]
     private StateEnum $status;
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return StateEnum
-     */
-    public function getState(): ?StateEnum
+    public function getState(): StateEnum
     {
-        if (is_string($this->status))
-            $this->status = StateEnum::get($this->status);
-
         return $this->status;
     }
 
@@ -57,7 +39,7 @@ class TabletUpdate
      * @param string|StateEnum $state
      * @return $this
      */
-    public function setState($state): TabletUpdate
+    public function setState(StateEnum|string $state): TabletUpdate
     {
         if (is_string($state))
             $state = StateEnum::get($state);
@@ -65,9 +47,6 @@ class TabletUpdate
         return $this;
     }
 
-    /**
-     * @return Tablet
-     */
     public function getTablet(): Tablet
     {
         return $this->tablet;
@@ -83,9 +62,6 @@ class TabletUpdate
         return $this;
     }
 
-    /**
-     * @return Update
-     */
     public function getUpdate(): Update
     {
         return $this->update;
@@ -101,17 +77,11 @@ class TabletUpdate
         return $this;
     }
 
-    /**
-     * @return DateTimeImmutable
-     */
     public function getTimestamp(): DateTimeImmutable
     {
         return $this->update->getCreatedAt();
     }
 
-    /**
-     * @return string
-     */
     public function getWho(): string
     {
         return $this->update->getActor();

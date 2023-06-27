@@ -20,7 +20,7 @@
                     {% if loop.first %}
                         <td rowspan="{{ loop.length }}"><a
                                     href="{{ url_for('area:view', { 'id': area.id }) }}">{{ area.name }}</a></td>
-                        <td rowspan="{{ loop.length }}">Tent STATUS TBD</td>
+                        <td rowspan="{{ loop.length }}">{{ macros.area_status(area.tablets) }}</td>
                     {% endif %}
                     <td><a href="{{ url_for('tablet:view', {'id':tablet.id}) }}">{{ tablet.code }}</a></td>
                     <td>{{ macros.status(tablet.lastUpdate.state) }}</td>

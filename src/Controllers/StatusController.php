@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Form\UpdateType;
 use App\Models\Area;
 use App\Models\Update;
-use App\Storage\Storage;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use http\Exception\BadQueryStringException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Exception\HttpException;
 
 class StatusController extends Controller
 {
@@ -51,7 +53,7 @@ class StatusController extends Controller
     {
         $params = $request->getQueryParams();
         if (!array_key_exists('id', $params)) {
-            throw new BadQueryStringException('Query parameter "id" is required', 400);
+            throw new HttpException($request, 'Query parameter "id" is required', 400);
         }
         $id = $params['id'];
 

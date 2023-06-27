@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Extension\Psr7;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +40,7 @@ class Psr7RequestHandler implements RequestHandlerInterface
         }
 
         // For request methods that must not have a request body we fetch data
-        // from the query string. Otherwise we look for data in the request body.
+        // from the query string. Otherwise, we look for data in the request body.
         if ('GET' === $method || 'HEAD' === $method || 'TRACE' === $method) {
             if ('' === $name) {
                 $data = $request->getQueryParams();
@@ -53,7 +55,7 @@ class Psr7RequestHandler implements RequestHandlerInterface
         } else {
             // Mark the form with an error if the uploaded size was too large
             // This is done here and not in FormValidator because $_POST is
-            // empty when that error occurs. Hence the form is never submitted.
+            // empty when that error occurs. Hence, the form is never submitted.
             if ($this->serverParams->hasPostMaxSizeBeenExceeded()) {
                 // Submit the form, but don't clear the default values
                 $form->submit(null, false);

@@ -6,32 +6,26 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="tablets")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "tablets")]
 class Tablet
 {
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
     private int $id;
-    /**
-     * @ORM\Column(type="string")
-     */
+
+    #[ORM\Column(type: "string")]
     private string $code;
-    /**
-     * @ORM\ManyToOne(targetEntity="Area", inversedBy="tablets", fetch="EAGER")
-     * @var Area
-     */
+
+    #[ORM\ManyToOne(targetEntity: Area::class, fetch: "EAGER", inversedBy: "tablets")]
     private Area $area;
+
     /**
-     * @ORM\OneToMany(targetEntity="TabletUpdate", mappedBy="tablet", cascade={"persist"}, fetch="EAGER")
      * @var ArrayCollection<int,TabletUpdate>
      */
+    #[ORM\OneToMany(mappedBy: "tablet", targetEntity: TabletUpdate::class, cascade: ["persist"], fetch: "EAGER")]
     private $tabletUpdates;
 
     public function __construct()
@@ -39,17 +33,11 @@ class Tablet
         $this->tabletUpdates = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return Area|null
-     */
     public function getArea(): ?Area
     {
         return $this->area;
@@ -65,9 +53,6 @@ class Tablet
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->code;
@@ -91,10 +76,7 @@ class Tablet
         return $this->tabletUpdates->matching((new Criteria())->orderBy(['update.created_at' => 'DESC']));
     }
 
-    /**
-     * @return ?TabletUpdate
-     */
-    public function getLastUpdate()
+    public function getLastUpdate(): ?TabletUpdate
     {
         $collection = $this->getTabletUpdates();
         return $collection->first() ? $collection->first() : null;

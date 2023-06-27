@@ -1,7 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var \Slim\App $app
- * @noinspection PhpRedundantVariableDocTypeInspection
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 

@@ -1,14 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Bootstrap;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
-// replace with mechanism to retrieve EntityManager in your app
+// Loads the EM from the container
 $container = Bootstrap::container();
 $entityManager = $container->get(EntityManager::class);
 

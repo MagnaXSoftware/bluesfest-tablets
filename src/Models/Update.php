@@ -6,38 +6,31 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="updates")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "updates")]
 class Update
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
     private int $id;
-    /**
-     * @ORM\ManyToOne(targetEntity="Area")
-     */
+
+    #[ORM\ManyToOne(targetEntity: Area::class)]
     private ?Area $area;
+
     /**
-     * @ORM\OneToMany(targetEntity="TabletUpdate", mappedBy="update", cascade={"persist"}, fetch="LAZY")
      * @var ArrayCollection<int,TabletUpdate>
      */
+    #[ORM\OneToMany(mappedBy: "update", targetEntity: "TabletUpdate", cascade: ["persist"], fetch: "LAZY")]
     private $tabletUpdates;
-    /**
-     * @ORM\Column(type="string")
-     */
+
+    #[ORM\Column(type: "string")]
     private string $actor;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $notes;
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+
+    #[ORM\Column(type: "datetime_immutable")]
     private DateTimeImmutable $created_at;
 
     public function __construct()
@@ -45,17 +38,11 @@ class Update
         $this->tabletUpdates = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return ?Area
-     */
     public function getArea(): ?Area
     {
         return $this->area;
@@ -79,9 +66,7 @@ class Update
         return $this->tabletUpdates;
     }
 
-    /**
-     * @return string
-     */
+
     public function getActor(): string
     {
         return $this->actor;
@@ -97,9 +82,7 @@ class Update
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
+
     public function getNotes(): ?string
     {
         return $this->notes;
@@ -115,9 +98,7 @@ class Update
         return $this;
     }
 
-    /**
-     * @return DateTimeImmutable
-     */
+
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->created_at;

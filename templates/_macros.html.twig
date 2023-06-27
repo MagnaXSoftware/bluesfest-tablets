@@ -25,3 +25,11 @@
         <a href="{{ dest }}" class="pill pill-dark"><span>{{ value.readable }}</span></a>
     {% endif %}
 {% endmacro status_update %}
+
+{% macro area_status(tablets) %}
+    {% if tablets has some t => t.lastUpdate.state == enum_get('\\App\\Enums\\StateEnum', 'deployed') %}
+        <a href="{{ dest }}" class="pill pill-green"><span>Open</span></a>
+    {% else %}
+        <a href="{{ dest }}" class="pill pill-dark"><span>Closed</span></a>
+    {% endif %}
+{% endmacro area_status %}

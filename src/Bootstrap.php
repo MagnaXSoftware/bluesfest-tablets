@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 use App\Doctrine\DBAL\Types\StateEnumType;
@@ -40,10 +42,10 @@ class Bootstrap
 
             require_once __DIR__ . '/routes.php';
 
-            $app->addErrorMiddleware(true, true, true);
-
             $app->addMiddleware(TwigMiddleware::createFromContainer($app));
             $app->addRoutingMiddleware();
+
+            $app->addErrorMiddleware(true, true, true);
 
             self::$app = $app;
         }

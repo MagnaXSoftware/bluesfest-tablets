@@ -6,27 +6,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="areas")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "areas")]
 class Area
 {
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
     protected int $id;
-    /**
-     * @ORM\Column(type="string")
-     */
+
+    #[ORM\Column(type: "string")]
     protected string $name;
+
     /**
-     * @ORM\OneToMany(targetEntity="Tablet", mappedBy="area", fetch="LAZY")
      * @var ArrayCollection<int, Tablet>
      */
+    #[ORM\OneToMany(mappedBy: "area", targetEntity: Tablet::class, fetch: "LAZY")]
     protected $tablets;
 
     public function __construct()
@@ -34,35 +30,22 @@ class Area
         $this->tablets = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Area
-     */
     public function setName(string $name): Area
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getExpected(): ?int
     {
         return count($this->getTablets());

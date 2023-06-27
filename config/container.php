@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Doctrine\DBAL\Types\StateEnumType;
 use App\Doctrine\Registry;
 use App\Form\Extension\Psr7\Psr7Extension;
@@ -7,7 +9,10 @@ use App\Twig\DateExtension;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\Configuration;
+use Doctrine\DBAL\Schema\AbstractAsset;
+use Doctrine\Migrations\Configuration\Configuration as MigrationConfiguration;
+use Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration;
+use Doctrine\ORM\Configuration as ORMConfiguration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,6 +39,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\RuntimeLoader\FactoryRuntimeLoader;
 use Westsworld\TimeAgo;
 use function DI\autowire;
+use function DI\create;
 use function DI\get;
 
 return [
@@ -54,25 +60,40 @@ return [
 
         return $container->get('root') . '/tablets.db';
     },
-    Configuration::class => function (ContainerInterface $container): Configuration {
-        return ORMSetup::createAnnotationMetadataConfiguration(
+    ORMConfiguration::class => function (ContainerInterface $container): ORMConfiguration {
+        $config = ORMSetup::createAttributeMetadataConfiguration(
             [$container->get('root') . '/src/Models'],
             true,
             null,
             $container->get(CacheItemPoolInterface::class)
         );
+        $config->setSchemaAssetsFilter(function (string|AbstractAsset $assetName): bool {
+            if ($assetName instanceof AbstractAsset) {
+                $assetName = $assetName->getName();
+            }
+
+            return !in_array($assetName, ['doctrine_migration_versions']);
+        });
+
+        return $config;
     },
-    EntityManager::class => function (Connection $connection, Configuration $configuration): EntityManager {
-        return EntityManager::create($connection, $configuration);
-    },
+    EntityManager::class => autowire()->constructorParameter('eventManager', null),
     Connection::class => function (ContainerInterface $container): Connection {
         $conn = DriverManager::getConnection(
             ['driver' => 'pdo_sqlite', 'path' => $container->get('db.path')],
-            $container->get(Configuration::class),
+            $container->get(ORMConfiguration::class),
         );
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping(StateEnumType::NAME, StateEnumType::NAME);
 
         return $conn;
+    },
+    MigrationConfiguration::class => function (ContainerInterface $container): MigrationConfiguration {
+        $config = new MigrationConfiguration();
+        $config->setMetadataStorageConfiguration(new TableMetadataStorageConfiguration());
+        $config->addMigrationsDirectory('App\Migrations', $container->get('root') . '/src/Migrations');
+        $config->setMigrationOrganization(MigrationConfiguration::VERSIONS_ORGANIZATION_NONE);
+
+        return $config;
     },
 
     CacheItemPoolInterface::class => get(ArrayCachePool::class),
@@ -129,9 +150,7 @@ return [
     Registry::class => autowire(),
 
     TranslatorInterface::class => get(Translator::class),
-    Translator::class => function (): Translator {
-        return new Translator('en');
-    },
+    Translator::class => create()->constructor('en'),
 
     ValidatorInterface::class => function (): ValidatorInterface {
         $builder = new ValidatorBuilder();

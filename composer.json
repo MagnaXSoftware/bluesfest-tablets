@@ -22,7 +22,6 @@
     "jimmiw/php-time-ago": "^3.2",
     "kdyby/parse-use-statements": "^0.2.0",
     "doctrine/orm": "^2.13.1",
-    "doctrine/annotations": "^1.13",
     "doctrine/migrations": "^3.5"
   },
   "replace": {
@@ -40,7 +39,8 @@
     "symfony/polyfill-php71": "*",
     "symfony/polyfill-php72": "*",
     "symfony/polyfill-php73": "*",
-    "symfony/polyfill-php74": "*"
+    "symfony/polyfill-php74": "*",
+    "symfony/polyfill-php80": "*"
   },
   "autoload": {
     "psr-4": {
